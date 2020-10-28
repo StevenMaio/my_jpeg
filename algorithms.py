@@ -7,16 +7,15 @@ from itertools import product
 
 from math import cos,pi,sqrt
 
-NUM_ROWS = 8
-NUM_COLS = 8
+from utils import weights_matrix, quant_matrix, DIMENSIONS
 
-def helper_alpha(t):
+def _helper_alpha(t):
     if t == 0:
         return 1/sqrt(2)
     else:
         return 1
 
-def cos_2d(x,u):
+def _cos_2d(x,u):
     return cos((2*x+1)*u*pi/16)
 
 def DCT(data):
@@ -30,23 +29,39 @@ def DCT(data):
     Output:
         the DCT of the input data
     '''
-    output = np.zeros((NUM_ROWS, NUM_COLS))
-    cos_arr = np.zeros((NUM_ROWS, NUM_COLS))
+    output = np.zeros((DIMENSIONS, DIMENSIONS))
+    cos_arr = np.zeros((DIMENSIONS, DIMENSIONS))
     # precompute terms to save runtime
-    for x,u in product(range(8),repeat=2):
-        cos_arr[x,u] = cos_2d(x,u)
+    for x,u in product(range(DIMENSIONS),repeat=2):
+        cos_arr[x,u] = _cos_2d(x,u)
     # perform 2-d DCT
-    for u,v in product(range(8),repeat=2):
+    for u,v in product(range(DIMENSIONS),repeat=2):
         G_uv = 0
-        for x,y in product(range(8),repeat=2):
+        for x,y in product(range(DIMENSIONS),repeat=2):
             term = data[x,y]
             term *= cos_arr[x,u]*cos_arr[y,v]
             G_uv += term
-        G_uv *= helper_alpha(u)*helper_alpha(v)/4.0
+        G_uv *= _helper_alpha(u)*_helper_alpha(v)/4.0
         output[u,v] = G_uv
     return output
 
-def inverse_DCT(data, weights=np.ones((NUM_ROWS, NUM_ROWS))):
+def quantize(data, quantization_matrix):
+    '''
+    Performs quantization step.
+    '''
+    result = np.zeros((DIMENSIONS, DIMENSIONS))
+    for i,j in product(range(DIMENSIONS),repeat=2):
+        result[i,j] = round(data[i,j]/quantization_matrix[i,j])
+    return result
+
+def dequantize(data, quantization_matrix):
+    '''
+    "reverses" the quantization step. This can't be completely inverted because
+    information is lossed, but it can reconstruct a close approximation.
+    '''
+    return np.multiply(data, quantization_matrix)
+
+def inverse_DCT(data, weights=np.ones((DIMENSIONS, DIMENSIONS))):
     '''
     Performs the inverse 2-d DCT.
 
@@ -57,18 +72,18 @@ def inverse_DCT(data, weights=np.ones((NUM_ROWS, NUM_ROWS))):
         the reconstructed 8x8 matrix
     '''
     coeffs = np.multiply(data, weights) # calculate weighted DCT matrix
-    output = np.zeros((NUM_ROWS, NUM_COLS))
-    cos_arr = np.zeros((NUM_ROWS, NUM_COLS))
+    output = np.zeros((DIMENSIONS, DIMENSIONS))
+    cos_arr = np.zeros((DIMENSIONS, DIMENSIONS))
     # precompute terms to save runtime
-    for x,u in product(range(8),repeat=2):
-        cos_arr[x,u] = cos_2d(x,u)
+    for x,u in product(range(DIMENSIONS),repeat=2):
+        cos_arr[x,u] = _cos_2d(x,u)
     # calculate inverse 2-d DCT
-    for x,y in product(range(8),repeat=2):
+    for x,y in product(range(DIMENSIONS),repeat=2):
         f_xy = 0
-        for u,v in product(range(8),repeat=2):
+        for u,v in product(range(DIMENSIONS),repeat=2):
             term = coeffs[u,v]
             term *= cos_arr[x,u]*cos_arr[y,v]
-            term *= helper_alpha(u)*helper_alpha(v)
+            term *= _helper_alpha(u)*_helper_alpha(v)
             f_xy += term
         f_xy /= 4
         output[x,y] = f_xy
@@ -85,17 +100,9 @@ if __name__ == '__main__':
             [-43,-57,-64,-69,-73,-67,-63,-45],
             [-41,-49,-59,-60,-63,-52,-50,-34]
     ]
-    my_weights = [
-        [1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1],
-        [1,1,1,1,0,0,0,0],
-        [1,1,1,1,0,0,0,0],
-        [1,1,1,1,0,0,0,0],
-        [1,1,1,1,0,0,0,0],
-    ]
     g = np.matrix(m)
     out = DCT(g)
-    outout = inverse_DCT(out, weights=my_weights)
-    print(g-outout)
+    outout = inverse_DCT(out)
+    outoutout = quantize(out, quant_matrix)
+    print(out)
+    print(dequantize(outoutout,quant_matrix))
