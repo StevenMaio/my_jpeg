@@ -57,7 +57,7 @@ def inverse_DCT(data, weights=np.ones((NUM_ROWS, NUM_ROWS))):
     Output:
         the reconstructed 8x8 matrix
     '''
-    coeffs = np.multiply(data, weights)
+    coeffs = np.multiply(data, weights) # calculate weighted DCT matrix
     output = np.zeros((NUM_ROWS, NUM_COLS))
     cos_arr = np.zeros((NUM_ROWS, NUM_COLS))
     # precompute terms to save runtime
@@ -72,7 +72,7 @@ def inverse_DCT(data, weights=np.ones((NUM_ROWS, NUM_ROWS))):
             term *= cos_arr[y,v]
             term *= helper_alpha(u)*helper_alpha(v)
             f_xy += term
-        f_xy *= 1.0/4
+        f_xy /= 4
         output[x,y] = f_xy
     return output
 
