@@ -63,13 +63,6 @@ def encode(fp, output):
                 outfile.write(cb)
                 outfile.write(cr)
 
-            # DELETE
-            print(transformed_y)
-            print(transformed_cb)
-            print(transformed_cr)
-            return
-            # DELETE
-
 
 def decode(fp, output):
     '''
@@ -93,6 +86,8 @@ def decode(fp, output):
         transformed_cr = np.zeros((DIMENSIONS, DIMENSIONS))
         # iterate through 8x8 block
         for step_i,step_j in product(range(height_steps),range(width_steps)):
+            i_base = DIMENSIONS*step_i
+            j_base = DIMENSIONS*step_j
             indices = filter(lambda x: min(x[0],x[1]) <= DIMENSIONS//2,
                              product(range(DIMENSIONS),repeat=2))
             for pos in indices:
@@ -106,8 +101,26 @@ def decode(fp, output):
             recovered_y = dequantize(transformed_y, quant_matrix)
             recovered_cb = dequantize(transformed_cb, quant_matrix)
             recovered_cr = dequantize(transformed_cr, quant_matrix)
+            # do inverse DCT
+            recovered_y = inverse_DCT(recovered_y)
+            recovered_cb = inverse_DCT(recovered_cb)
+            recovered_cr = inverse_DCT(recovered_cr)
+            for i,j in product(range(DIMENSIONS),repeat=2):
+                y = recovered_y[i,j]
+                cb = recovered_cb[i,j]
+                cr = recovered_cr[i,j]
+                r,g,b = YCbCr_to_RGB((y,cb,cr))
+                r = int(r)
+                g = int(g)
+                b = int(b)
+                pos = (i_base+i, j_base+j)
+                val = (r,g,b)
+                im.putpixel(pos, val)
+        im.save(output)
 
 
 if __name__ == '__main__':
     encode('images/test3.bmp', 'images/test3.myjeg')
-    decode('images/test3.myjeg', 'hi')
+    print("Finished encoding")
+    decode('images/test3.myjeg', 'images/hi.bmp')
+    print("Finished decoding")
