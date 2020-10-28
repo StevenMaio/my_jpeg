@@ -24,7 +24,8 @@ def encode(fp, output):
     '''
     im = Image.open(fp)
     with open(output, "wb") as outfile:
-        # the image will be truncated so that it's dimensions are multiples of DIMENSIONS
+        # the image will be truncated so that it's dimensions are multiples
+        # of DIMENSIONS
         width_steps = im.width//DIMENSIONS
         height_steps = im.height//DIMENSIONS
         outfile.write(width_steps.to_bytes(1, 'little'))
@@ -52,7 +53,8 @@ def encode(fp, output):
             transformed_y = quantize(transformed_y, quant_matrix)
             transformed_cb = quantize(transformed_cb, quant_matrix)
             transformed_cr = quantize(transformed_cr, quant_matrix)
-            # need to figure out a good way to undo this -- or it won't be a problem?
+            # need to figure out a good way to undo this -- or it won't be
+            # a problem?
             indices = filter(lambda x: min(x[0],x[1]) <= DIMENSIONS//2,
                              product(range(DIMENSIONS),repeat=2))
             for i,j in indices:
