@@ -47,7 +47,7 @@ def DCT(data):
         output[u,v] = G_uv
     return output
 
-def inverse_DCT(data):
+def inverse_DCT(data, weights=np.ones((NUM_ROWS, NUM_ROWS))):
     '''
     Performs the inverse 2-d DCT.
 
@@ -57,6 +57,7 @@ def inverse_DCT(data):
     Output:
         the reconstructed 8x8 matrix
     '''
+    coeffs = np.multiply(data, weights)
     output = np.zeros((NUM_ROWS, NUM_COLS))
     cos_arr = np.zeros((NUM_ROWS, NUM_COLS))
     # precompute terms to save runtime
@@ -66,7 +67,7 @@ def inverse_DCT(data):
     for x,y in product(range(8),repeat=2):
         f_xy = 0
         for u,v in product(range(8),repeat=2):
-            term = data[u,v]
+            term = coeffs[u,v]
             term *= cos_arr[x,u]
             term *= cos_arr[y,v]
             term *= helper_alpha(u)*helper_alpha(v)
@@ -86,10 +87,17 @@ if __name__ == '__main__':
             [-43,-57,-64,-69,-73,-67,-63,-45],
             [-41,-49,-59,-60,-63,-52,-50,-34]
     ]
+    my_weights = [
+        [1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1],
+        [1,1,1,1,0,0,0,0],
+        [1,1,1,1,0,0,0,0],
+        [1,1,1,1,0,0,0,0],
+        [1,1,1,1,0,0,0,0],
+    ]
     g = np.matrix(m)
     out = DCT(g)
-    # for i in range(NUM_ROWS):
-        # print(out[i])
-    outout = inverse_DCT(out)
-    for j in range(NUM_ROWS):
-        print(outout[j])
+    outout = inverse_DCT(out, weights=my_weights)
+    print(g-outout)
