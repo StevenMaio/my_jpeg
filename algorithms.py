@@ -31,21 +31,48 @@ def DCT(data):
         the DCT of the input data
     '''
     output = np.zeros((NUM_ROWS, NUM_COLS))
-    calculated_cos = np.zeros((NUM_ROWS, NUM_COLS))
+    cos_arr = np.zeros((NUM_ROWS, NUM_COLS))
     # precompute terms to save runtime
     for x,u in product(range(8),repeat=2):
-        calculated_cos[x,u] = cos_2d(x,u)
-
+        cos_arr[x,u] = cos_2d(x,u)
     # perform 2-d DCT
     for u,v in product(range(8),repeat=2):
         G_uv = 0
         for x,y in product(range(8),repeat=2):
             term = data[x,y]
-            term *= cos((2*x+1)*u*pi/16.0)
-            term *= cos((2*y+1)*v*pi/16.0)
+            term *= cos_arr[x,u]
+            term *= cos_arr[y,v]
             G_uv += term
         G_uv *= helper_alpha(u)*helper_alpha(v)/4.0
         output[u,v] = G_uv
+    return output
+
+def inverse_DCT(data):
+    '''
+    Performs the inverse 2-d DCT.
+
+    Params:
+        data:
+            an array containing the DCT coefficients of some input
+    Output:
+        the reconstructed 8x8 matrix
+    '''
+    output = np.zeros((NUM_ROWS, NUM_COLS))
+    cos_arr = np.zeros((NUM_ROWS, NUM_COLS))
+    # precompute terms to save runtime
+    for x,u in product(range(8),repeat=2):
+        cos_arr[x,u] = cos_2d(x,u)
+    # calculate inverse 2-d DCT
+    for x,y in product(range(8),repeat=2):
+        f_xy = 0
+        for u,v in product(range(8),repeat=2):
+            term = data[u,v]
+            term *= cos_arr[x,u]
+            term *= cos_arr[y,v]
+            term *= helper_alpha(u)*helper_alpha(v)
+            f_xy += term
+        f_xy *= 1.0/4
+        output[x,y] = f_xy
     return output
 
 if __name__ == '__main__':
@@ -61,5 +88,8 @@ if __name__ == '__main__':
     ]
     g = np.matrix(m)
     out = DCT(g)
-    for i in range(NUM_ROWS):
-        print(out[i])
+    # for i in range(NUM_ROWS):
+        # print(out[i])
+    outout = inverse_DCT(out)
+    for j in range(NUM_ROWS):
+        print(outout[j])
