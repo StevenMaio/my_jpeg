@@ -24,52 +24,26 @@ if __name__ == '__main__':
                                        dest='action',
                                        metavar='action')
 
-    # encode parser
-    encode_parser = subparsers.add_parser('encode')
-    encode_parser.add_argument('fp',
-                               type=str,
-                               metavar='input',
-                               help='the file to be encoded')
-    encode_parser.add_argument('destination',
-                               type=str,
-                               metavar='dest',
-                               help='the output filename')
-    encode_parser.add_argument('--weights',
-                               '-w',
-                               default='WEIGHTS_DEFAULT',
-                               choices=WEIGHTS,
-                               help='custom weights used for truncating terms')
-
-    # decode parser
-    decode_parser = subparsers.add_parser('decode')
-    decode_parser.add_argument('fp',
-                               type=str,
-                               metavar='input',
-                               help='the file to be decoded')
-    decode_parser.add_argument('destination',
-                               type=str,
-                               metavar='dest',
-                               help='the filename for the decoded image')
-    decode_parser.add_argument('--weights',
-                               '-w',
-                               default='WEIGHTS_DEFAULT',
-                               choices=WEIGHTS,
-                               help='custom weights used for truncating terms')
-    # transform parser
-    transform_parser = subparsers.add_parser('transform')
-    transform_parser.add_argument('fp',
-                                  type=str,
-                                  metavar='input',
-                                  help='the file to be decoded')
-    transform_parser.add_argument('destination',
-                                  type=str,
-                                  metavar='dest',
-                                  help='the filename for the decoded image')
-    transform_parser.add_argument('--weights',
-                                  '-w',
-                                  default='WEIGHTS_DEFAULT',
-                                  choices=WEIGHTS,
-                                  help='custom weights used for truncating terms')
+    # NOTE: Should I just put everything in one parser? All args are the same
+    commands = [
+            subparsers.add_parser('encode'),
+            subparsers.add_parser('decode'),
+            subparsers.add_parser('transform'),
+    ]
+    for p in commands: 
+        p.add_argument('fp',
+                       type=str,
+                       metavar='input',
+                       help='the file to be encoded')
+        p.add_argument('destination',
+                       type=str,
+                       metavar='dest',
+                       help='the output filename')
+        p.add_argument('--weights',
+                       '-w',
+                       default='WEIGHTS_DEFAULT',
+                       choices=WEIGHTS,
+                       help='custom weights used for truncating terms')
     args = vars(parser.parse_args())
     if args['action']==None:
         parser.print_help()
