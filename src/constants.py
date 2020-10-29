@@ -7,6 +7,9 @@ import numpy as np
 # dimensions of the matrices
 DIMENSIONS = 8
 
+# file extension
+EXTENSION = "myjpeg"
+
 ONES = np.ones((DIMENSIONS, DIMENSIONS))
 
 # This particular weighting scheme uses 3/4-th the info

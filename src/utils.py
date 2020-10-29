@@ -7,7 +7,7 @@ from itertools import product
 
 from math import cos,pi,sqrt
 
-from constants import WEIGHTS_DEFAULT, QUANT_DEFAULT, DIMENSIONS, ONES
+from src.constants import WEIGHTS_DEFAULT, QUANT_DEFAULT, DIMENSIONS, ONES
 
 def _helper_alpha(t):
     if t == 0:

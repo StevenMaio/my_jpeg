@@ -3,8 +3,8 @@ Does the stuff
 '''
 
 # My stuff
-from utils import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
-from constants import WEIGHTS_DEFAULT, WEIGHTS_SMALL, QUANT_DEFAULT, DIMENSIONS
+from src.utils import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
+from src.constants import WEIGHTS_DEFAULT, WEIGHTS_SMALL, QUANT_DEFAULT, DIMENSIONS
 
 import numpy as np
 from PIL import Image

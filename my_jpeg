@@ -1,0 +1,57 @@
+#!/usr/bin/python3.7
+'''
+MyJpeg program. Encodes an 24-bit RGB image into a .myjpeg file, which must
+then be decoded before it can be viewed.
+'''
+
+from src.encoder import encode, decode
+
+import argparse
+
+def main(action, fp, destination, weights):
+    # TODO: parser weights file to get a weights matrix
+    if action == 'encode':
+        encode(fp, destination)
+    elif action == 'decode':
+        decode(fp, destination)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='compress some 24-bit images')
+    subparsers = parser.add_subparsers(title='action',
+                                       dest='action',
+                                       metavar='action')
+
+    # encode parser
+    encode_parser = subparsers.add_parser('encode')
+    encode_parser.add_argument('fp',
+                               type=str,
+                               metavar='input',
+                               help='the file to be encoded')
+    encode_parser.add_argument('destination',
+                               type=str,
+                               metavar='dest',
+                               help='the output filename')
+    encode_parser.add_argument('--weights',
+                               '-w',
+                               default=None,
+                               help='custom weights used for truncating terms')
+
+    # decode parser
+    decode_parser = subparsers.add_parser('decode')
+    decode_parser.add_argument('fp',
+                               type=str,
+                               metavar='input',
+                               help='the file to be decoded')
+    decode_parser.add_argument('destination',
+                               type=str,
+                               metavar='dest',
+                               help='the filename for the decoded image')
+    decode_parser.add_argument('--weights',
+                               '-w',
+                               default=None,
+                               help='custom weights used for truncating terms')
+    args = vars(parser.parse_args())
+    if args['action']==None:
+        parser.print_help()
+    else:
+        main(**args)
