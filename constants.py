@@ -9,9 +9,8 @@ DIMENSIONS = 8
 
 ONES = np.ones((DIMENSIONS, DIMENSIONS))
 
-# this particular matrix makes it so that the bottom right quadrant
-# of a matrix will make no contribution to reconstructing a matrix
-weights_matrix = np.matrix([
+# This particular weighting scheme uses 3/4-th the info
+WEIGHTS_DEFAULT = np.matrix([
     [1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1],
@@ -22,7 +21,8 @@ weights_matrix = np.matrix([
     [1,1,1,1,0,0,0,0],
 ])
 
-weights_matrix2 = np.matrix([
+# This particular weighting scheme uses 1/16-th the info
+WEIGHTS_SMALL = np.matrix([
     [1,1,0,0,0,0,0,0],
     [1,1,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
@@ -34,7 +34,7 @@ weights_matrix2 = np.matrix([
 ])
 
 # This is the matrix used in the wikipedia article
-quant_matrix = np.matrix([
+QUANT_DEFAULT = np.matrix([
     [16,11,10,16,24,40,51,61],
     [12,12,14,19,26,58,60,55],
     [14,13,16,24,40,57,69,56],

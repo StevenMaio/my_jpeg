@@ -7,7 +7,7 @@ from itertools import product
 
 from math import cos,pi,sqrt
 
-from constants import weights_matrix, quant_matrix, DIMENSIONS, ONES
+from constants import WEIGHTS_DEFAULT, QUANT_DEFAULT, DIMENSIONS, ONES
 
 def _helper_alpha(t):
     if t == 0:
@@ -138,6 +138,6 @@ if __name__ == '__main__':
     g = np.matrix(m)
     out = DCT(g)
     outout = inverse_DCT(out)
-    outoutout = quantize(out, quant_matrix)
+    outoutout = quantize(out, QUANT_DEFAULT)
     print(out)
-    print(dequantize(outoutout,quant_matrix))
+    print(dequantize(outoutout,QUANT_DEFAULT))

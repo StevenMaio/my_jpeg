@@ -4,7 +4,7 @@ Does the stuff
 
 # My stuff
 from algorithms import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
-from constants import weights_matrix, weights_matrix2, quant_matrix, DIMENSIONS
+from constants import WEIGHTS_DEFAULT, WEIGHTS_SMALL, QUANT_DEFAULT, DIMENSIONS
 
 import numpy as np
 from PIL import Image
@@ -49,9 +49,9 @@ def encode(fp, output):
             transformed_cb = DCT(cb_matrix)
             transformed_cr = DCT(cr_matrix)
             # perform quantization
-            transformed_y = quantize(transformed_y, quant_matrix)
-            transformed_cb = quantize(transformed_cb, quant_matrix)
-            transformed_cr = quantize(transformed_cr, quant_matrix)
+            transformed_y = quantize(transformed_y, QUANT_DEFAULT)
+            transformed_cb = quantize(transformed_cb, QUANT_DEFAULT)
+            transformed_cr = quantize(transformed_cr, QUANT_DEFAULT)
             # need to figure out a good way to undo this -- or it won't be
             # a problem?
             indices = filter(lambda x: min(x[0],x[1]) <= DIMENSIONS//2,
@@ -99,9 +99,9 @@ def decode(fp, output):
                 transformed_cb[pos] = cb
                 transformed_cr[pos] = cr
             # convert back to RGB and then do shit
-            recovered_y = dequantize(transformed_y, quant_matrix)
-            recovered_cb = dequantize(transformed_cb, quant_matrix)
-            recovered_cr = dequantize(transformed_cr, quant_matrix)
+            recovered_y = dequantize(transformed_y, QUANT_DEFAULT)
+            recovered_cb = dequantize(transformed_cb, QUANT_DEFAULT)
+            recovered_cr = dequantize(transformed_cr, QUANT_DEFAULT)
             # do inverse DCT
             recovered_y = inverse_DCT(recovered_y)
             recovered_cb = inverse_DCT(recovered_cb)

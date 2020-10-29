@@ -3,9 +3,8 @@ A sample attempt at this compression algorithm.
 '''
 
 # My stuff
-from algorithms import DCT, inverse_DCT, quantize, dequantize
-from utils import weights_matrix, weights_matrix2, quant_matrix, DIMENSIONS
-from image_tools import RGB_to_YCbCr, YCbCr_to_RGB
+from algorithms import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
+from constants import WEIGHTS_DEFAULT, WEIGHTS_SMALL, quant_matrix, DIMENSIONS
 
 # Other stuff
 import numpy as np
@@ -46,9 +45,9 @@ def checkerboard_test():
     recovered_cr = dequantize(transformed_cr, quant_matrix)
 
     # inverse DCT while ignoring bottom right quadrant
-    recovered_y = inverse_DCT(recovered_y, weights_matrix)
-    recovered_cb = inverse_DCT(recovered_cb, weights_matrix)
-    recovered_cr = inverse_DCT(recovered_cr, weights_matrix)
+    recovered_y = inverse_DCT(recovered_y, WEIGHTS_DEFAULT)
+    recovered_cb = inverse_DCT(recovered_cb, WEIGHTS_DEFAULT)
+    recovered_cr = inverse_DCT(recovered_cr, WEIGHTS_DEFAULT)
 
     # reconstruct the original image
     reconstructed_im = Image.new('RGB', (DIMENSIONS, DIMENSIONS))
@@ -103,9 +102,9 @@ def test2():
     recovered_cr = dequantize(transformed_cr, quant_matrix)
 
     # inverse DCT while ignoring bottom right quadrant
-    recovered_y = inverse_DCT(recovered_y, weights_matrix)
-    recovered_cb = inverse_DCT(recovered_cb, weights_matrix)
-    recovered_cr = inverse_DCT(recovered_cr, weights_matrix)
+    recovered_y = inverse_DCT(recovered_y, WEIGHTS_DEFAULT)
+    recovered_cb = inverse_DCT(recovered_cb, WEIGHTS_DEFAULT)
+    recovered_cr = inverse_DCT(recovered_cr, WEIGHTS_DEFAULT)
 
     # reconstruct the original image
     reconstructed_im = Image.new('RGB', (DIMENSIONS, DIMENSIONS))
@@ -166,9 +165,9 @@ def test3():
         recovered_cr = dequantize(transformed_cr, quant_matrix)
 
         # inverse DCT while ignoring bottom right quadrant
-        recovered_y = inverse_DCT(recovered_y, weights_matrix2)
-        recovered_cb = inverse_DCT(recovered_cb, weights_matrix2)
-        recovered_cr = inverse_DCT(recovered_cr, weights_matrix2)
+        recovered_y = inverse_DCT(recovered_y, WEIGHTS_DEFAULT)
+        recovered_cb = inverse_DCT(recovered_cb, WEIGHTS_DEFAULT)
+        recovered_cr = inverse_DCT(recovered_cr, WEIGHTS_DEFAULT)
 
         # reconstruct the original image
         for i,j in product(range(DIMENSIONS),repeat=2):
