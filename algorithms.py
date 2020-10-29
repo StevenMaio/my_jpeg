@@ -7,7 +7,7 @@ from itertools import product
 
 from math import cos,pi,sqrt
 
-from utils import weights_matrix, quant_matrix, DIMENSIONS
+from constants import weights_matrix, quant_matrix, DIMENSIONS, ONES
 
 def _helper_alpha(t):
     if t == 0:
@@ -61,7 +61,7 @@ def dequantize(data, quantization_matrix):
     '''
     return np.multiply(data, quantization_matrix)
 
-def inverse_DCT(data, weights=np.ones((DIMENSIONS, DIMENSIONS))):
+def inverse_DCT(data, weights=ONES):
     '''
     Performs the inverse 2-d DCT.
 
@@ -88,6 +88,41 @@ def inverse_DCT(data, weights=np.ones((DIMENSIONS, DIMENSIONS))):
         f_xy /= 4
         output[x,y] = f_xy
     return output
+
+def RGB_to_YCbCr(p):
+    '''
+    Converts a pixel p from RBG to YCbCr. The particular choice of constants
+    are chosen from the wikipedia article on JPEG.
+
+    Params:
+        p:
+            a pixel of the form (r,g,b)
+    Output:
+        a pixel in YCbCr format (y,c_b,c_r)
+    '''
+    r,g,b = p
+    y = 0.299*r + 0.587*g + 0.114*b
+    cb = 128 - 0.168736*r - 0.331264*g + 0.5*b
+    cr = 128 + 0.5*r - 0.418688*g - 0.081312*b
+    return (y,cb,cr)
+
+def YCbCr_to_RGB(p):
+    '''
+    Converts a pixel p from YCbCr to RHB. The particular choice of constants
+    are chosen from the wikipedia article on JPEG.
+
+    Params:
+        p:
+            a pixel of the form (y,c_b,c_r)
+    Output:
+        a pixel in RGB format (r,g,b)
+    '''
+    y, cb, cr = p
+    r = y + 1.402*(cr-128)
+    g = y - 0.344136*(cb-128) - 0.714136*(cr-128)
+    b = y + 1.772*(cb-128)
+    return (r,g,b)
+
 
 if __name__ == '__main__':
     m = [

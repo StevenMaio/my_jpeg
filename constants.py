@@ -7,6 +7,8 @@ import numpy as np
 # dimensions of the matrices
 DIMENSIONS = 8
 
+ONES = np.ones((DIMENSIONS, DIMENSIONS))
+
 # this particular matrix makes it so that the bottom right quadrant
 # of a matrix will make no contribution to reconstructing a matrix
 weights_matrix = np.matrix([

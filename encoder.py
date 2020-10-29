@@ -3,9 +3,8 @@ Does the stuff
 '''
 
 # My stuff
-from algorithms import DCT, inverse_DCT, quantize, dequantize
-from utils import weights_matrix, weights_matrix2, quant_matrix, DIMENSIONS
-from image_tools import RGB_to_YCbCr, YCbCr_to_RGB
+from algorithms import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
+from constants import weights_matrix, weights_matrix2, quant_matrix, DIMENSIONS
 
 import numpy as np
 from PIL import Image
