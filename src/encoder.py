@@ -103,9 +103,9 @@ def decode(fp, output, weights=WEIGHTS_DEFAULT):
             recovered_cb = dequantize(transformed_cb, QUANT_DEFAULT)
             recovered_cr = dequantize(transformed_cr, QUANT_DEFAULT)
             # do inverse DCT
-            recovered_y = inverse_DCT(recovered_y)
-            recovered_cb = inverse_DCT(recovered_cb)
-            recovered_cr = inverse_DCT(recovered_cr)
+            recovered_y = inverse_DCT(recovered_y, weights)
+            recovered_cb = inverse_DCT(recovered_cb, weights)
+            recovered_cr = inverse_DCT(recovered_cr, weights)
             for i,j in product(range(DIMENSIONS),repeat=2):
                 y = recovered_y[i,j]
                 cb = recovered_cb[i,j]
@@ -114,6 +114,65 @@ def decode(fp, output, weights=WEIGHTS_DEFAULT):
                 pos = (col_base+i, row_base+j)
                 im.putpixel(pos, rgb)
         im.save(output)
+
+def transform(fp, output, weights=WEIGHTS_DEFAULT):
+    '''
+    Encodes the file whose name is given by fp into the appropriate format.
+    The image must be in RGB format.
+
+    Params:
+        fp:
+            an image in RGB format
+        output:
+            the path of the output file
+    '''
+    # open the old image file
+    im = Image.open(fp)
+    width_steps = im.width//DIMENSIONS
+    height_steps = im.height//DIMENSIONS
+
+    transform_im = Image.new('RGB',
+                             (width_steps*DIMENSIONS, height_steps*DIMENSIONS))
+
+    # matrices for converted colors (these can stay)
+    y_matrix = np.zeros((DIMENSIONS,DIMENSIONS))
+    cb_matrix = np.zeros((DIMENSIONS,DIMENSIONS))
+    cr_matrix = np.zeros((DIMENSIONS,DIMENSIONS))
+    # iterate through each 8x8 of the image
+    for step_i,step_j in product(range(width_steps), range(height_steps)):
+        col_base = DIMENSIONS*step_i
+        row_base = DIMENSIONS*step_j
+        # convert the pixels to YCbCr format
+        for i,j in product(range(DIMENSIONS),repeat=2):
+            y,cb,cr = RGB_to_YCbCr(im.getpixel((col_base+i,row_base+j)))
+            y_matrix[i,j] = y
+            cb_matrix[i,j] = cb
+            cr_matrix[i,j] = cr
+        # calculate DCT of the YCrCb matrices
+        transformed_y = DCT(y_matrix)
+        transformed_cb = DCT(cb_matrix)
+        transformed_cr = DCT(cr_matrix)
+        # perform quantization
+        transformed_y = quantize(transformed_y, QUANT_DEFAULT)
+        transformed_cb = quantize(transformed_cb, QUANT_DEFAULT)
+        transformed_cr = quantize(transformed_cr, QUANT_DEFAULT)
+
+        # dequantize the quantized matrix
+        recovered_y = dequantize(transformed_y, QUANT_DEFAULT)
+        recovered_cb = dequantize(transformed_cb, QUANT_DEFAULT)
+        recovered_cr = dequantize(transformed_cr, QUANT_DEFAULT)
+        # do inverse DCT
+        recovered_y = inverse_DCT(recovered_y, weights)
+        recovered_cb = inverse_DCT(recovered_cb, weights)
+        recovered_cr = inverse_DCT(recovered_cr, weights)
+        for i,j in product(range(DIMENSIONS),repeat=2):
+            y = recovered_y[i,j]
+            cb = recovered_cb[i,j]
+            cr = recovered_cr[i,j]
+            rgb = tuple(map(lambda t : int(t), YCbCr_to_RGB((y,cb,cr))))
+            pos = (col_base+i, row_base+j)
+            transform_im.putpixel(pos, rgb)
+    transform_im.save(output)
 
 
 if __name__ == '__main__':

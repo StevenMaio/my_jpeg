@@ -4,16 +4,19 @@ MyJpeg program. Encodes an 24-bit RGB image into a .myjpeg file, which must
 then be decoded before it can be viewed.
 '''
 
-from src.encoder import encode, decode
+from src.encoder import encode, decode, transform
+from src.constants import *
 
 import argparse
 
 def main(action, fp, destination, weights):
-    # TODO: parser weights file to get a weights matrix
+    weights_matrix = globals()[weights]
     if action == 'encode':
-        encode(fp, destination)
+        encode(fp, destination, weights_matrix)
     elif action == 'decode':
-        decode(fp, destination)
+        decode(fp, destination, weights_matrix)
+    elif action == 'transform':
+        transform(fp, destination, weights_matrix)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='compress some 24-bit images')
@@ -33,7 +36,8 @@ if __name__ == '__main__':
                                help='the output filename')
     encode_parser.add_argument('--weights',
                                '-w',
-                               default=None,
+                               default='WEIGHTS_DEFAULT',
+                               choices=WEIGHTS,
                                help='custom weights used for truncating terms')
 
     # decode parser
@@ -48,8 +52,24 @@ if __name__ == '__main__':
                                help='the filename for the decoded image')
     decode_parser.add_argument('--weights',
                                '-w',
-                               default=None,
+                               default='WEIGHTS_DEFAULT',
+                               choices=WEIGHTS,
                                help='custom weights used for truncating terms')
+    # transform parser
+    transform_parser = subparsers.add_parser('transform')
+    transform_parser.add_argument('fp',
+                                  type=str,
+                                  metavar='input',
+                                  help='the file to be decoded')
+    transform_parser.add_argument('destination',
+                                  type=str,
+                                  metavar='dest',
+                                  help='the filename for the decoded image')
+    transform_parser.add_argument('--weights',
+                                  '-w',
+                                  default='WEIGHTS_DEFAULT',
+                                  choices=WEIGHTS,
+                                  help='custom weights used for truncating terms')
     args = vars(parser.parse_args())
     if args['action']==None:
         parser.print_help()
