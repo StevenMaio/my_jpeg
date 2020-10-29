@@ -3,7 +3,7 @@ Does the stuff
 '''
 
 # My stuff
-from algorithms import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
+from utils import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
 from constants import WEIGHTS_DEFAULT, WEIGHTS_SMALL, QUANT_DEFAULT, DIMENSIONS
 
 import numpy as np

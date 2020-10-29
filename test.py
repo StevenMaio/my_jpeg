@@ -3,7 +3,7 @@ A sample attempt at this compression algorithm.
 '''
 
 # My stuff
-from algorithms import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
+from utils import DCT, inverse_DCT, quantize, dequantize, RGB_to_YCbCr, YCbCr_to_RGB
 from constants import WEIGHTS_DEFAULT, WEIGHTS_SMALL, quant_matrix, DIMENSIONS
 
 # Other stuff
