@@ -1,5 +1,5 @@
 # MyJpeg
 
-I decided to implement my own basic version of JPEG. I thought it was cool that
-it utilizes the Discrete Cosine Transform (DCT), and that's essentially why I
-did this.
+A lossy image compression tool that copies the basic steps of JPEG. 24-bit
+images are encoded into a compressed format, which must be then decoded
+to be readable. You can also use this to blur images.
